@@ -1,7 +1,5 @@
 ﻿streamlit==1.28.0
-pandas==2.1.0
+pandas==2.1.1
+numpy==1.24.3
 plotly==5.17.0
-numpy==1.24.0
-reportlab==4.0.4
-streamlit-option-menu==0.3.6
-pyarrow>=14.0.0
+bcrypt==4.0.1

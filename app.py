@@ -1,4 +1,4 @@
-import streamlit as st
+﻿import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -103,6 +103,24 @@ st.markdown("""
         color: #EF4444;
         font-weight: bold;
     }
+    .receipt-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+    }
+    .receipt-table th, .receipt-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    .receipt-table th {
+        background-color: #1E3A8A;
+        color: white;
+        font-weight: bold;
+    }
+    .receipt-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -115,6 +133,8 @@ if 'cart' not in st.session_state:
     st.session_state.cart = []
 if 'selected_module' not in st.session_state:
     st.session_state.selected_module = "Dashboard"
+if 'last_receipt' not in st.session_state:
+    st.session_state.last_receipt = None
 
 # Initialize classes
 auth = Authentication()
@@ -135,21 +155,27 @@ def show_login():
             
             col_a, col_b = st.columns(2)
             with col_a:
-                login_btn = st.button("🚀 Login", width='stretch', type="primary")
+                login_btn = st.button("🚀 Login", type="primary")
             with col_b:
-                reset_btn = st.button("🔄 Reset", width='stretch')
+                reset_btn = st.button("🔄 Reset")
             
             if login_btn:
                 if username and password:
                     result = auth.login(username, password)
-                    if result['authenticated']:
+                    if result and result.get('authenticated'):
                         st.session_state.authenticated = True
-                        st.session_state.current_user = result
+                        st.session_state.current_user = {
+                            'username': result.get('username', 'User'),
+                            'role': result.get('role', 'user'),
+                            'full_name': result.get('full_name', ''),
+                            'email': result.get('email', '')
+                        }
                         st.session_state.selected_module = "Dashboard"
-                        st.success(f"Welcome, {result['username']}!")
+                        st.success(f"Welcome, {result.get('username', 'User')}!")
                         st.rerun()
                     else:
-                        st.error("Invalid credentials. Please try again.")
+                        error_msg = result.get('error', 'Invalid credentials') if result else 'Login failed'
+                        st.error(f"Authentication failed: {error_msg}")
                 else:
                     st.warning("Please enter both username and password")
             
@@ -273,7 +299,6 @@ def show_dashboard():
         alert_data = []
         for item in low_stock_items:
             alert_level = "CRITICAL" if item['stock_quantity'] < item['min_stock_level'] * 0.3 else "LOW"
-            alert_color = "danger-card" if alert_level == "CRITICAL" else "warning-card"
             
             alert_data.append({
                 'Product': item['name'],
@@ -356,7 +381,7 @@ def show_sales_processing():
                     qty = st.number_input(f"Quantity", min_value=1, max_value=product['stock_quantity'], 
                                          value=1, key=f"qty_{product['id']}")
                     
-                    if st.button(f"➕ Add to Cart", key=f"add_{product['id']}", width='stretch'):
+                    if st.button(f"➕ Add to Cart", key=f"add_{product['id']}"):
                         cart_item = {
                             'id': product['id'],
                             'name': product['name'],
@@ -393,7 +418,7 @@ def show_sales_processing():
                 with col_b:
                     st.write(f"{item['quantity']} x KES {item['price']:,.2f}")
                 with col_c:
-                    if st.button("❌", key=f"remove_{item['id']}", width='content'):
+                    if st.button("❌", key=f"remove_{item['id']}"):
                         st.session_state.cart = [i for i in st.session_state.cart if i['id'] != item['id']]
                         st.rerun()
                 
@@ -420,13 +445,13 @@ def show_sales_processing():
             
             col_btn1, col_btn2 = st.columns(2)
             with col_btn1:
-                if st.button("✅ Complete Sale", width='stretch', type="primary"):
+                if st.button("✅ Complete Sale", type="primary"):
                     if customer_name:
                         # Generate receipt
                         receipt_data = {
                             'transaction_id': f"TXN{datetime.now().strftime('%Y%m%d%H%M%S')}",
                             'customer_name': customer_name,
-                            'items': st.session_state.cart,
+                            'items': st.session_state.cart.copy(),
                             'subtotal': cart_total,
                             'tax_rate': tax_rate,
                             'tax_amount': tax_amount,
@@ -450,67 +475,88 @@ def show_sales_processing():
                         st.warning("Please enter customer name")
             
             with col_btn2:
-                if st.button("🗑️ Clear Cart", width='stretch', type="secondary"):
+                if st.button("🗑️ Clear Cart", type="secondary"):
                     st.session_state.cart = []
                     st.rerun()
+        
+        # Show last receipt if exists
+        if st.session_state.last_receipt:
+            st.markdown("---")
+            if st.button("📄 View Last Receipt"):
+                show_receipt_preview(st.session_state.last_receipt)
 
 def show_receipt_preview(receipt_data):
-    """Display receipt preview"""
+    """Display receipt preview - FIXED VERSION"""
     st.markdown("### 📄 Receipt Preview")
     
-    receipt_html = f"""
-    <div style="border: 1px solid #ddd; padding: 20px; border-radius: 10px; background-color: #f9f9f9;">
-        <h3 style="text-align: center; color: #1E3A8A;">SALPHINE CHEMOS GETAWAY RESORT</h3>
-        <p style="text-align: center;">P.O. Box 19938 - 00202 KNH Nairobi</p>
-        <p style="text-align: center;">Tel: +254 727 680 468 | +254 736 880 488</p>
-        <p style="text-align: center;">Email: info@lukenyagetaway.com</p>
-        <hr>
-        <p><strong>Transaction ID:</strong> {receipt_data['transaction_id']}</p>
-        <p><strong>Date:</strong> {receipt_data['date']}</p>
-        <p><strong>Customer:</strong> {receipt_data['customer_name']}</p>
-        <p><strong>Cashier:</strong> {receipt_data['user']}</p>
-        <hr>
-        <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-                <th style="text-align: left; border-bottom: 1px solid #ddd;">Item</th>
-                <th style="text-align: right; border-bottom: 1px solid #ddd;">Qty</th>
-                <th style="text-align: right; border-bottom: 1px solid #ddd;">Price</th>
-                <th style="text-align: right; border-bottom: 1px solid #ddd;">Total</th>
-            </tr>
-    """
-    
-    for item in receipt_data['items']:
-        receipt_html += f"""
-            <tr>
-                <td>{item['name']}</td>
-                <td style="text-align: right;">{item['quantity']}</td>
-                <td style="text-align: right;">KES {item['price']:,.2f}</td>
-                <td style="text-align: right;">KES {item['total']:,.2f}</td>
-            </tr>
-        """
-    
-    receipt_html += f"""
-        </table>
-        <hr>
-        <p style="text-align: right;"><strong>Subtotal:</strong> KES {receipt_data['subtotal']:,.2f}</p>
-        <p style="text-align: right;"><strong>Tax ({receipt_data['tax_rate']}%):</strong> KES {receipt_data['tax_amount']:,.2f}</p>
-        <h3 style="text-align: right; color: #1E3A8A;">Total: KES {receipt_data['total']:,.2f}</h3>
-        <hr>
-        <p><strong>Payment Method:</strong> {receipt_data['payment_method']}</p>
-        <p style="text-align: center; margin-top: 20px;">Thank you for your business!</p>
-        <p style="text-align: center;">Visit us: www.salphinechemos.com</p>
-    </div>
-    """
-    
-    st.markdown(receipt_html, unsafe_allow_html=True)
+    # Create receipt using Streamlit components instead of raw HTML
+    with st.container():
+        st.markdown(f"""
+        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 10px; background-color: #f9f9f9;">
+            <h3 style="text-align: center; color: #1E3A8A;">SALPHINE CHEMOS GETAWAY RESORT</h3>
+            <p style="text-align: center;">P.O. Box 19938 - 00202 KNH Nairobi</p>
+            <p style="text-align: center;">Tel: +254 727 680 468 | +254 736 880 488</p>
+            <p style="text-align: center;">Email: info@lukenyagetaway.com</p>
+            <hr>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Transaction details
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown(f"**Transaction ID:** {receipt_data['transaction_id']}")
+            st.markdown(f"**Date:** {receipt_data['date']}")
+        with col2:
+            st.markdown(f"**Customer:** {receipt_data['customer_name']}")
+            st.markdown(f"**Cashier:** {receipt_data['user']}")
+        
+        st.markdown("---")
+        
+        # Items table using Streamlit dataframe
+        st.markdown("**Items Purchased:**")
+        items_data = []
+        for item in receipt_data['items']:
+            items_data.append({
+                'Item': item['name'],
+                'Qty': item['quantity'],
+                'Price': f"KES {item['price']:,.2f}",
+                'Total': f"KES {item['total']:,.2f}"
+            })
+        
+        df_items = pd.DataFrame(items_data)
+        st.dataframe(df_items, width='stretch', hide_index=True)
+        
+        st.markdown("---")
+        
+        # Summary
+        col1, col2, col3 = st.columns([2, 1, 1])
+        with col2:
+            st.markdown(f"**Subtotal:**")
+            st.markdown(f"**Tax ({receipt_data['tax_rate']}%):**")
+            st.markdown("**Total:**")
+        with col3:
+            st.markdown(f"KES {receipt_data['subtotal']:,.2f}")
+            st.markdown(f"KES {receipt_data['tax_amount']:,.2f}")
+            st.markdown(f"**KES {receipt_data['total']:,.2f}**")
+        
+        st.markdown("---")
+        st.markdown(f"**Payment Method:** {receipt_data['payment_method']}")
+        
+        st.markdown("""
+        <div style="text-align: center; margin-top: 20px;">
+            <p>Thank you for your business!</p>
+            <p>Visit us: www.salphinechemos.com</p>
+        </div>
+        """, unsafe_allow_html=True)
     
     # Export buttons
+    st.markdown("---")
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("📥 Download PDF Receipt", width='stretch'):
+        if st.button("📥 Download PDF Receipt"):
             generate_pdf_receipt(receipt_data)
     with col2:
-        if st.button("📊 Export to Excel", width='stretch'):
+        if st.button("📊 Export to Excel"):
             generate_excel_receipt(receipt_data)
 
 def generate_pdf_receipt(receipt_data):
@@ -562,11 +608,19 @@ def generate_pdf_receipt(receipt_data):
     c.setFont("Helvetica-Bold", 14)
     c.drawString(400, y_position, f"TOTAL: KES {receipt_data['total']:,.2f}")
     
+    y_position -= 40
+    c.setFont("Helvetica", 10)
+    c.drawString(50, y_position, f"Payment Method: {receipt_data['payment_method']}")
+    
+    y_position -= 40
+    c.drawString(200, y_position, "Thank you for your business!")
+    c.drawString(200, y_position-20, "Visit us: www.salphinechemos.com")
+    
     c.save()
     
     buffer.seek(0)
     st.download_button(
-        label="⬇️ Download PDF",
+        label="⬇️ Click to Download PDF",
         data=buffer,
         file_name=f"receipt_{receipt_data['transaction_id']}.pdf",
         mime="application/pdf"
@@ -574,7 +628,17 @@ def generate_pdf_receipt(receipt_data):
 
 def generate_excel_receipt(receipt_data):
     """Generate Excel receipt"""
-    df_items = pd.DataFrame(receipt_data['items'])
+    # Create items dataframe
+    items_data = []
+    for item in receipt_data['items']:
+        items_data.append({
+            'Item Name': item['name'],
+            'Quantity': item['quantity'],
+            'Unit Price (KES)': item['price'],
+            'Total (KES)': item['total']
+        })
+    
+    df_items = pd.DataFrame(items_data)
     
     # Create summary dataframe
     summary_data = {
@@ -582,10 +646,10 @@ def generate_excel_receipt(receipt_data):
         'Date': [receipt_data['date']],
         'Customer': [receipt_data['customer_name']],
         'Cashier': [receipt_data['user']],
-        'Subtotal': [receipt_data['subtotal']],
-        'Tax Rate': [f"{receipt_data['tax_rate']}%"],
-        'Tax Amount': [receipt_data['tax_amount']],
-        'Total': [receipt_data['total']],
+        'Subtotal (KES)': [receipt_data['subtotal']],
+        'Tax Rate (%)': [receipt_data['tax_rate']],
+        'Tax Amount (KES)': [receipt_data['tax_amount']],
+        'Total (KES)': [receipt_data['total']],
         'Payment Method': [receipt_data['payment_method']]
     }
     df_summary = pd.DataFrame(summary_data)
@@ -598,7 +662,7 @@ def generate_excel_receipt(receipt_data):
     
     buffer.seek(0)
     st.download_button(
-        label="⬇️ Download Excel",
+        label="⬇️ Click to Download Excel",
         data=buffer,
         file_name=f"receipt_{receipt_data['transaction_id']}.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -672,20 +736,7 @@ def show_inventory():
             })
         
         df_inventory = pd.DataFrame(inventory_data)
-        
-        # Apply styling
-        def color_status(val):
-            if "Adequate" in val:
-                color = '#10B981'
-            elif "Low" in val:
-                color = '#F59E0B'
-            else:
-                color = '#EF4444'
-            return f'color: {color}; font-weight: bold'
-        
-        styled_df = df_inventory.style.applymap(color_status, subset=['Status'])
-        
-        st.dataframe(styled_df, width='stretch', hide_index=True)
+        st.dataframe(df_inventory, width='stretch', hide_index=True)
         
         # Stock level visualization
         st.markdown("### 📊 Stock Level Analysis")
@@ -810,8 +861,7 @@ def show_inventory():
         
         if filtered:
             df_filtered = pd.DataFrame(filtered)
-            st.dataframe(df_filtered[['name', 'category', 'price', 'stock_quantity']], 
-                        width='stretch', hide_index=True)
+            st.dataframe(df_filtered[['name', 'category', 'price', 'stock_quantity']], width='stretch', hide_index=True)
         else:
             st.info("No products match your search criteria")
 
@@ -1054,7 +1104,7 @@ def show_user_management():
     st.markdown("<h1 class='main-header'>👥 User Management</h1>", unsafe_allow_html=True)
     
     # Check if user is admin
-    if st.session_state.current_user['role'] != 'admin':
+    if not st.session_state.current_user or st.session_state.current_user.get('role') != 'admin':
         st.warning("⚠️ This section is only accessible to administrators.")
         return
     
@@ -1079,21 +1129,10 @@ def show_user_management():
             })
         
         df_users = pd.DataFrame(user_data)
-        
-        # Add edit and delete buttons
-        edited_df = st.data_editor(
-            df_users,
-            column_config={
-                "Edit": st.column_config.CheckboxColumn("Edit", default=False),
-                "Delete": st.column_config.CheckboxColumn("Delete", default=False)
-            },
-            disabled=["ID", "Username", "Role", "Email", "Status", "Last Login"],
-            hide_index=True,
-            width='stretch'
-        )
+        st.dataframe(df_users, width='stretch', hide_index=True)
         
         # Actions based on editor
-        if st.button("💾 Save Changes", type="primary", width='stretch'):
+        if st.button("💾 Save Changes", type="primary"):
             st.success("User data updated successfully!")
     
     with tab2:
@@ -1166,7 +1205,7 @@ def show_user_management():
         st.dataframe(filtered_logs, width='stretch', hide_index=True)
         
         # Export logs
-        if st.button("📥 Export Activity Logs", type="primary", width='stretch'):
+        if st.button("📥 Export Activity Logs", type="primary"):
             csv = filtered_logs.to_csv(index=False)
             st.download_button(
                 label="⬇️ Download CSV",
@@ -1194,7 +1233,7 @@ def show_user_management():
                     
                     new_status = st.radio("Change Status", ["Active", "Inactive", "Suspended"])
                     
-                    if st.button("🔄 Update Status", type="primary", width='stretch'):
+                    if st.button("🔄 Update Status", type="primary"):
                         st.success(f"Account status updated to: {new_status}")
                 
                 with col2:
@@ -1203,7 +1242,7 @@ def show_user_management():
                     st.write(f"**Current Role:** {user['role']}")
                     new_role = st.selectbox("Assign New Role", ["admin", "manager", "clerk"])
                     
-                    if st.button("👑 Update Role", type="primary", width='stretch'):
+                    if st.button("👑 Update Role", type="primary"):
                         st.success(f"Role updated to: {new_role}")
                 
                 st.markdown("---")
@@ -1212,11 +1251,11 @@ def show_user_management():
                 col_danger1, col_danger2 = st.columns(2)
                 
                 with col_danger1:
-                    if st.button("🔒 Force Password Reset", type="secondary", width='stretch'):
+                    if st.button("🔒 Force Password Reset", type="secondary"):
                         st.warning("Password reset email sent to user.")
                 
                 with col_danger2:
-                    if st.button("🗑️ Delete Account", type="secondary", width='stretch'):
+                    if st.button("🗑️ Delete Account", type="secondary"):
                         st.error("Are you sure you want to delete this account? This action cannot be undone.")
                         confirm = st.checkbox("I confirm I want to delete this account")
                         if confirm:
@@ -1294,7 +1333,7 @@ def show_settings():
             template_style = st.selectbox("Template Style", 
                                          ["Modern", "Classic", "Minimal", "Professional"])
             
-            if st.button("🔄 Update Template", type="primary", width='stretch'):
+            if st.button("🔄 Update Template", type="primary"):
                 st.success("Receipt template updated successfully!")
     
     with tab3:
@@ -1331,7 +1370,7 @@ def show_settings():
                 notification_sound = st.checkbox("Play Notification Sound", value=True)
                 sound_type = st.selectbox("Sound Type", ["Default", "Chime", "Beep", "None"])
         
-        if st.button("🔔 Save Notification Settings", type="primary", width='stretch'):
+        if st.button("🔔 Save Notification Settings", type="primary"):
             st.success("Notification settings updated successfully!")
     
     with tab4:
@@ -1373,18 +1412,18 @@ def show_settings():
         col_maint1, col_maint2, col_maint3 = st.columns(3)
         
         with col_maint1:
-            if st.button("🔄 Clear Cache", type="secondary", width='stretch'):
+            if st.button("🔄 Clear Cache", type="secondary"):
                 st.info("Cache cleared successfully!")
         
         with col_maint2:
-            if st.button("📊 Rebuild Indexes", type="secondary", width='stretch'):
+            if st.button("📊 Rebuild Indexes", type="secondary"):
                 st.info("Database indexes rebuilt successfully!")
         
         with col_maint3:
-            if st.button("🚀 System Diagnostics", type="secondary", width='stretch'):
+            if st.button("🚀 System Diagnostics", type="secondary"):
                 st.info("System diagnostics completed. All systems operational.")
         
-        if st.button("💾 Save All Settings", type="primary", width='stretch'):
+        if st.button("💾 Save All Settings", type="primary"):
             st.success("All system settings saved successfully!")
 
 # MODULE 8: Security Settings
@@ -1505,7 +1544,7 @@ def show_security():
                     can_view_logs = st.checkbox("View System Logs", value=True)
                     can_backup_data = st.checkbox("Backup Data", value=selected_role == 'admin')
             
-            if st.button(f"💾 Save {selected_role} Permissions", type="primary", width='stretch'):
+            if st.button(f"💾 Save {selected_role} Permissions", type="primary"):
                 st.success(f"Permissions for {selected_role} role saved successfully!")
     
     with tab3:
@@ -1518,7 +1557,7 @@ def show_security():
         
         for i in range(30):
             security_logs.append({
-                'Timestamp': (datetime.now() - timedelta(hours=random.randint(1, 720))).strftime("%Y-%m-d %H:%M:%S"),
+                'Timestamp': (datetime.now() - timedelta(hours=random.randint(1, 720))).strftime("%Y-%m-%d %H:%M:%S"),
                 'Event': random.choice(security_actions),
                 'User': random.choice(['admin', 'manager1', 'clerk1', 'Unknown']),
                 'IP Address': f"192.168.1.{random.randint(1, 255)}",
@@ -1536,8 +1575,6 @@ def show_security():
                 return 'color: #EF4444; font-weight: bold'
             else:
                 return 'color: #F59E0B; font-weight: bold'
-        
-        styled_df = df_security.style.applymap(color_status, subset=['Status'])
         
         # Filter options
         col_filter1, col_filter2 = st.columns(2)
@@ -1558,14 +1595,13 @@ def show_security():
             filtered_security = filtered_security[filtered_security['Status'].isin(log_status)]
         
         # Display logs
-        st.dataframe(filtered_security.style.applymap(color_status, subset=['Status']), 
-                    width='stretch', hide_index=True)
+        st.dataframe(filtered_security, width='stretch', hide_index=True)
         
         # Export and clear logs
         col_export, col_clear = st.columns(2)
         
         with col_export:
-            if st.button("📥 Export Audit Logs", type="primary", width='stretch'):
+            if st.button("📥 Export Audit Logs", type="primary"):
                 csv = filtered_security.to_csv(index=False)
                 st.download_button(
                     label="⬇️ Download CSV",
@@ -1575,7 +1611,7 @@ def show_security():
                 )
         
         with col_clear:
-            if st.button("🗑️ Clear Old Logs", type="secondary", width='stretch'):
+            if st.button("🗑️ Clear Old Logs", type="secondary"):
                 st.warning("This will delete logs older than 90 days. Continue?")
                 if st.checkbox("Yes, clear old logs"):
                     st.info("Old logs cleared successfully!")
@@ -1640,7 +1676,7 @@ def show_security():
             monitor_privileged = st.checkbox("Monitor Privileged Accounts", value=True)
             log_all_access = st.checkbox("Log All Access Attempts", value=True)
         
-        if st.button("🛡️ Apply Security Settings", type="primary", width='stretch'):
+        if st.button("🛡️ Apply Security Settings", type="primary"):
             st.success("Security settings applied successfully!")
             st.info("Some settings may require system restart to take effect")
 
@@ -1673,18 +1709,19 @@ def main_navigation():
         """, unsafe_allow_html=True)
         
         # User info
-        user_role_icon = {
-            'admin': '👑',
-            'manager': '📊',
-            'clerk': '💼'
-        }.get(st.session_state.current_user['role'], '👤')
-        
-        st.markdown(f"""
-        <div class='user-info'>
-            <h4>{user_role_icon} {st.session_state.current_user['username']}</h4>
-            <p>{st.session_state.current_user['role'].upper()}</p>
-        </div>
-        """, unsafe_allow_html=True)
+        if st.session_state.current_user:
+            user_role_icon = {
+                'admin': '👑',
+                'manager': '📊',
+                'clerk': '💼'
+            }.get(st.session_state.current_user.get('role', 'user'), '👤')
+            
+            st.markdown(f"""
+            <div class='user-info'>
+                <h4>{user_role_icon} {st.session_state.current_user.get('username', 'User')}</h4>
+                <p>{st.session_state.current_user.get('role', 'USER').upper()}</p>
+            </div>
+            """, unsafe_allow_html=True)
         
         st.markdown("<h2 class='sidebar-header'>📋 Navigation</h2>", unsafe_allow_html=True)
         
@@ -1723,7 +1760,7 @@ def main_navigation():
         <div style="text-align: center; font-size: 0.8rem; color: #666;">
             <p><strong>Salphine chemos Getaway Resort</strong></p>
             <p>P.O. Box 19938 - 00202 KNH Nairobi</p>
-            <p>📞 +254 701 078 375</p>
+            <p>📞 +254 727 680 468</p>
             <p>📧 info@salphinechemos.com</p>
             <p>🌐 www.salphinechemos.com</p>
         </div>
@@ -1761,12 +1798,15 @@ def main():
                 
                 col_btn1, col_btn2 = st.columns(2)
                 with col_btn1:
-                    if st.button("✅ Yes, Logout", width='stretch', type="primary"):
-                        auth.logout()
+                    if st.button("✅ Yes, Logout", type="primary"):
+                        st.session_state.authenticated = False
+                        st.session_state.current_user = None
+                        st.session_state.cart = []
+                        st.session_state.last_receipt = None
                         st.success("Logged out successfully!")
                         st.rerun()
                 with col_btn2:
-                    if st.button("❌ Cancel", width='stretch'):
+                    if st.button("❌ Cancel"):
                         st.session_state.selected_module = "Dashboard"
                         st.rerun()
 

@@ -1,4 +1,4 @@
-import streamlit as st
+﻿import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -328,7 +328,7 @@ def show_dashboard():
             })
         
         df_alerts = pd.DataFrame(alert_data)
-        st.dataframe(df_alerts, width='stretch', hide_index=True)
+        st.dataframe(df_alerts, , hide_index=True)
     else:
         st.success("?? All products have sufficient stock levels!")
 
@@ -560,7 +560,7 @@ def show_receipt_preview(receipt_data):
             })
         
         df_items = pd.DataFrame(items_data)
-        st.dataframe(df_items, width='stretch', hide_index=True)
+        st.dataframe(df_items, , hide_index=True)
         
         st.markdown("---")
         
@@ -778,7 +778,7 @@ def show_inventory():
             })
         
         df_inventory = pd.DataFrame(inventory_data)
-        st.dataframe(df_inventory, width='stretch', hide_index=True)
+        st.dataframe(df_inventory, , hide_index=True)
         
         # Stock level visualization
         st.markdown("### ?? Stock Level Analysis")
@@ -904,7 +904,7 @@ def show_inventory():
         
         if filtered:
             df_filtered = pd.DataFrame(filtered)
-            st.dataframe(df_filtered[['name', 'category', 'price', 'stock_quantity']], width='stretch', hide_index=True)
+            st.dataframe(df_filtered[['name', 'category', 'price', 'stock_quantity']], , hide_index=True)
         else:
             st.info("No products match your search criteria")
 
@@ -1081,12 +1081,12 @@ def show_reports():
             filtered_df = filtered_df.sort_values('quantity', ascending=False)
         
         # Display table with proper date format
-        st.dataframe(filtered_df, width='stretch')
+        st.dataframe(filtered_df)
         
         # Summary statistics
         st.markdown("### Summary Statistics")
         summary_stats = filtered_df.describe()
-        st.dataframe(summary_stats, width='stretch')
+        st.dataframe(summary_stats)
     
     with tab4:
         st.markdown("### Export Reports")
@@ -1192,7 +1192,7 @@ def show_user_management():
             })
         
         df_users = pd.DataFrame(user_data)
-        st.dataframe(df_users, width='stretch', hide_index=True)
+        st.dataframe(df_users, , hide_index=True)
         
         # Actions based on editor
         if st.button("?? Save Changes", type="primary", key="save_users"):
@@ -1265,7 +1265,7 @@ def show_user_management():
             filtered_logs = filtered_logs[filtered_logs['Action'].isin(log_action)]
         
         # Display logs
-        st.dataframe(filtered_logs, width='stretch', hide_index=True)
+        st.dataframe(filtered_logs, , hide_index=True)
         
         # Export logs
         if st.button("?? Export Activity Logs", type="primary", key="export_logs"):
@@ -1667,7 +1667,7 @@ def show_security():
             filtered_security = filtered_security[filtered_security['Status'].isin(log_status)]
         
         # Display logs
-        st.dataframe(filtered_security, width='stretch', hide_index=True)
+        st.dataframe(filtered_security, , hide_index=True)
         
         # Export and clear logs
         col_export, col_clear = st.columns(2)
@@ -1890,3 +1890,16 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
+
+
+
+
+
+
+

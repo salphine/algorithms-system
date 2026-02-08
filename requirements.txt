@@ -2,3 +2,5 @@
 rich==13.9.4
 plotly
 streamlit-option-menu
+reportlab
+numpy

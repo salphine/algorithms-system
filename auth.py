@@ -13,7 +13,7 @@ class Authentication:
     def login(self, username, password):
         """Authenticate user"""
         # SQLite uses ? as placeholder, not %s
-        query = "SELECT * FROM users WHERE username = ? AND password = ? AND is_active = TRUE"
+        query = "SELECT * FROM users WHERE username = ? AND password_hash = ? AND is_active = TRUE"
         hashed_password = self.hash_password(password)
         
         try:

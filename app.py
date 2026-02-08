@@ -1,4 +1,4 @@
-﻿import streamlit as st
+import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -16,7 +16,7 @@ import numpy as np
 # Page configuration
 st.set_page_config(
     page_title="Sales Management System",
-    page_icon="💰",
+    page_icon="??",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -158,7 +158,7 @@ def get_cached_data():
 
 # MODULE 1: User Authentication Interface
 def show_login():
-    st.markdown("<h1 class='main-header'>🔐SALPHINE CHEMOS SALES MANAGEMENT SYSTEM</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-header'>??SALPHINE CHEMOS SALES MANAGEMENT SYSTEM</h1>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1, 2, 1])
     
@@ -166,14 +166,14 @@ def show_login():
         with st.container():
             st.markdown("### Secure Login")
             
-            username = st.text_input("👤 Username", placeholder="Enter your username", key="login_username")
-            password = st.text_input("🔒 Password", type="password", placeholder="Enter your password", key="login_password")
+            username = st.text_input("?? Username", placeholder="Enter your username", key="login_username")
+            password = st.text_input("?? Password", type="password", placeholder="Enter your password", key="login_password")
             
             col_a, col_b = st.columns(2)
             with col_a:
-                login_btn = st.button("🚀 Login", type="primary", key="login_btn")
+                login_btn = st.button("?? Login", type="primary", key="login_btn")
             with col_b:
-                reset_btn = st.button("🔄 Reset", key="reset_btn")
+                reset_btn = st.button("?? Reset", key="reset_btn")
             
             if login_btn:
                 if username and password:
@@ -201,9 +201,9 @@ def show_login():
             st.markdown("---")
             st.markdown("""
             **Demo Credentials:**
-            - 👑 Admin: `admin` / `admin123`
-            - 📊 Manager: `manager1` / `manager123`
-            - 💼 Clerk: `clerk1` / `clerk123`
+            - ?? Admin: `admin` / `admin123`
+            - ?? Manager: `manager1` / `manager123`
+            - ?? Clerk: `clerk1` / `clerk123`
             """)
 
 # QuickSort Algorithm Implementation
@@ -220,7 +220,7 @@ def quicksort_products(products, key='name'):
 
 # MODULE 2: Dashboard
 def show_dashboard():
-    st.markdown("<h1 class='main-header'>📊 Dashboard Overview</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-header'>?? Dashboard Overview</h1>", unsafe_allow_html=True)
     
     # Get sample data from cache
     if st.session_state.products_data is None:
@@ -240,7 +240,7 @@ def show_dashboard():
     with col1:
         st.markdown(f"""
         <div class='metric-card info-card'>
-            <h3>📦 Total Products</h3>
+            <h3>?? Total Products</h3>
             <h2>{total_products}</h2>
         </div>
         """, unsafe_allow_html=True)
@@ -248,7 +248,7 @@ def show_dashboard():
     with col2:
         st.markdown(f"""
         <div class='metric-card warning-card'>
-            <h3>⚠️ Low Stock Items</h3>
+            <h3>?? Low Stock Items</h3>
             <h2>{low_stock}</h2>
         </div>
         """, unsafe_allow_html=True)
@@ -256,7 +256,7 @@ def show_dashboard():
     with col3:
         st.markdown(f"""
         <div class='metric-card danger-card'>
-            <h3>🚨 Critical Stock</h3>
+            <h3>?? Critical Stock</h3>
             <h2>{critical_stock}</h2>
         </div>
         """, unsafe_allow_html=True)
@@ -264,7 +264,7 @@ def show_dashboard():
     with col4:
         st.markdown(f"""
         <div class='metric-card success-card'>
-            <h3>💰 Stock Value</h3>
+            <h3>?? Stock Value</h3>
             <h2>KES {total_stock_value:,.2f}</h2>
         </div>
         """, unsafe_allow_html=True)
@@ -275,7 +275,7 @@ def show_dashboard():
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("### 📈 Stock Status Distribution")
+        st.markdown("### ?? Stock Status Distribution")
         
         # Create stock status data
         status_data = {
@@ -290,10 +290,10 @@ def show_dashboard():
         fig = px.pie(status_data, values='Count', names='Status', 
                     color_discrete_sequence=['#10B981', '#F59E0B', '#EF4444'])
         fig.update_traces(textposition='inside', textinfo='percent+label')
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
     
     with col2:
-        st.markdown("### 📊 Top Products by Stock Value")
+        st.markdown("### ?? Top Products by Stock Value")
         
         # Sort products by stock value
         sorted_products = sorted(products, key=lambda x: x['price'] * x['stock_quantity'], reverse=True)[:8]
@@ -307,10 +307,10 @@ def show_dashboard():
                     color='Value',
                     color_continuous_scale='Viridis')
         fig.update_layout(xaxis_title="", yaxis_title="Stock Value (KES)")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
     
     # Low stock alerts
-    st.markdown("### ⚠️ Low Stock Alerts")
+    st.markdown("### ?? Low Stock Alerts")
     
     low_stock_items = [p for p in products if p['stock_quantity'] < p['min_stock_level']]
     
@@ -330,11 +330,11 @@ def show_dashboard():
         df_alerts = pd.DataFrame(alert_data)
         st.dataframe(df_alerts, width='stretch', hide_index=True)
     else:
-        st.success("🎉 All products have sufficient stock levels!")
+        st.success("?? All products have sufficient stock levels!")
 
 # MODULE 3: Sales Processing Interface - FIXED VERSION
 def show_sales_processing():
-    st.markdown("<h1 class='main-header'>🛒 Sales Processing</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-header'>?? Sales Processing</h1>", unsafe_allow_html=True)
     
     # Get cached data
     if st.session_state.products_data is None:
@@ -343,20 +343,20 @@ def show_sales_processing():
     products = st.session_state.products_data
     
     # Use tabs instead of nested columns to fix the nesting issue
-    tab1, tab2 = st.tabs(["🏷️ Product Selection", "🛍️ Shopping Cart & Checkout"])
+    tab1, tab2 = st.tabs(["??? Product Selection", "??? Shopping Cart & Checkout"])
     
     with tab1:
-        st.markdown("### 🏷️ Product Selection")
+        st.markdown("### ??? Product Selection")
         
         # Search and filter in a single row
         search_col1, search_col2, search_col3 = st.columns([3, 2, 2])
         with search_col1:
-            search_term = st.text_input("🔍 Search products", placeholder="Type product name or category...", key="search_main")
+            search_term = st.text_input("?? Search products", placeholder="Type product name or category...", key="search_main")
         with search_col2:
             categories = list(set(p['category'] for p in products))
-            selected_category = st.selectbox("📂 Filter by category", ["All"] + categories, key="category_main")
+            selected_category = st.selectbox("?? Filter by category", ["All"] + categories, key="category_main")
         with search_col3:
-            sort_option = st.selectbox("🔢 Sort by", ["Name (A-Z)", "Name (Z-A)", "Price (Low-High)", "Price (High-Low)"], key="sort_main")
+            sort_option = st.selectbox("?? Sort by", ["Name (A-Z)", "Name (Z-A)", "Price (Low-High)", "Price (High-Low)"], key="sort_main")
         
         # Filter products
         filtered_products = products
@@ -396,8 +396,8 @@ def show_sales_processing():
                 
                 for j, product in enumerate(row_products):
                     with cols[j]:
-                        stock_status = "🟢" if product['stock_quantity'] >= product['min_stock_level'] else \
-                                      "🟡" if product['stock_quantity'] >= product['min_stock_level'] * 0.3 else "🔴"
+                        stock_status = "??" if product['stock_quantity'] >= product['min_stock_level'] else \
+                                      "??" if product['stock_quantity'] >= product['min_stock_level'] * 0.3 else "??"
                         
                         st.markdown(f"""
                         <div class='card'>
@@ -411,7 +411,7 @@ def show_sales_processing():
                         qty = st.number_input(f"Quantity", min_value=1, max_value=product['stock_quantity'], 
                                              value=1, key=f"qty_{product['id']}_{i}_{j}")
                         
-                        if st.button(f"➕ Add to Cart", key=f"add_{product['id']}_{i}_{j}"):
+                        if st.button(f"? Add to Cart", key=f"add_{product['id']}_{i}_{j}"):
                             cart_item = {
                                 'id': product['id'],
                                 'name': product['name'],
@@ -434,10 +434,10 @@ def show_sales_processing():
                             st.rerun()
     
     with tab2:
-        st.markdown("### 🛍️ Shopping Cart")
+        st.markdown("### ??? Shopping Cart")
         
         if not st.session_state.cart:
-            st.info("🛒 Your cart is empty")
+            st.info("?? Your cart is empty")
         else:
             # Display cart items without nested columns
             cart_total = 0
@@ -454,7 +454,7 @@ def show_sales_processing():
                     with col3:
                         st.write(f"KES {item['total']:,.2f}")
                     with col4:
-                        if st.button("❌", key=f"remove_{item['id']}_{idx}"):
+                        if st.button("?", key=f"remove_{item['id']}_{idx}"):
                             st.session_state.cart = [i for i in st.session_state.cart if i['id'] != item['id']]
                             st.rerun()
                     
@@ -474,16 +474,16 @@ def show_sales_processing():
             st.markdown("---")
             
             # Payment options
-            payment_method = st.selectbox("💳 Payment Method", 
+            payment_method = st.selectbox("?? Payment Method", 
                                          ["Cash", "Credit Card", "M-Pesa", "Debit Card", "Bank Transfer"],
                                          key="payment_method")
             
-            customer_name = st.text_input("👤 Customer Name", placeholder="Enter customer name", key="customer_name")
+            customer_name = st.text_input("?? Customer Name", placeholder="Enter customer name", key="customer_name")
             
             # Buttons in a single row
             col_btn1, col_btn2, col_btn3 = st.columns(3)
             with col_btn1:
-                if st.button("✅ Complete Sale", type="primary", key="complete_sale"):
+                if st.button("? Complete Sale", type="primary", key="complete_sale"):
                     if customer_name:
                         # Generate receipt
                         receipt_data = {
@@ -503,7 +503,7 @@ def show_sales_processing():
                         st.session_state.last_receipt = receipt_data
                         st.session_state.cart = []
                         
-                        st.success(f"✅ Sale completed! Transaction ID: {receipt_data['transaction_id']}")
+                        st.success(f"? Sale completed! Transaction ID: {receipt_data['transaction_id']}")
                         st.balloons()
                         
                         # Show receipt preview
@@ -513,17 +513,17 @@ def show_sales_processing():
                         st.warning("Please enter customer name")
             
             with col_btn2:
-                if st.button("🗑️ Clear Cart", type="secondary", key="clear_cart"):
+                if st.button("??? Clear Cart", type="secondary", key="clear_cart"):
                     st.session_state.cart = []
                     st.rerun()
             
             with col_btn3:
-                if st.session_state.last_receipt and st.button("📄 View Last Receipt", key="view_last"):
+                if st.session_state.last_receipt and st.button("?? View Last Receipt", key="view_last"):
                     show_receipt_preview(st.session_state.last_receipt)
 
 def show_receipt_preview(receipt_data):
     """Display receipt preview"""
-    st.markdown("### 📄 Receipt Preview")
+    st.markdown("### ?? Receipt Preview")
     
     # Create receipt using Streamlit components instead of raw HTML
     with st.container():
@@ -589,10 +589,10 @@ def show_receipt_preview(receipt_data):
     st.markdown("---")
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("📥 Download PDF Receipt", key="pdf_btn"):
+        if st.button("?? Download PDF Receipt", key="pdf_btn"):
             generate_pdf_receipt(receipt_data)
     with col2:
-        if st.button("📊 Export to Excel", key="excel_btn"):
+        if st.button("?? Export to Excel", key="excel_btn"):
             generate_excel_receipt(receipt_data)
 
 def generate_pdf_receipt(receipt_data):
@@ -656,7 +656,7 @@ def generate_pdf_receipt(receipt_data):
     
     buffer.seek(0)
     st.download_button(
-        label="⬇️ Click to Download PDF",
+        label="?? Click to Download PDF",
         data=buffer,
         file_name=f"receipt_{receipt_data['transaction_id']}.pdf",
         mime="application/pdf",
@@ -699,7 +699,7 @@ def generate_excel_receipt(receipt_data):
     
     buffer.seek(0)
     st.download_button(
-        label="⬇️ Click to Download Excel",
+        label="?? Click to Download Excel",
         data=buffer,
         file_name=f"receipt_{receipt_data['transaction_id']}.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -708,7 +708,7 @@ def generate_excel_receipt(receipt_data):
 
 # MODULE 4: Sorted Inventory List
 def show_inventory():
-    st.markdown("<h1 class='main-header'>📦 Inventory Management</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-header'>?? Inventory Management</h1>", unsafe_allow_html=True)
     
     # Get cached data
     if st.session_state.products_data is None:
@@ -717,7 +717,7 @@ def show_inventory():
     products = st.session_state.products_data
     
     # CRUD Operations
-    tab1, tab2, tab3, tab4 = st.tabs(["📋 View Inventory", "➕ Add Product", "✏️ Edit Product", "🔍 Search & Filter"])
+    tab1, tab2, tab3, tab4 = st.tabs(["?? View Inventory", "? Add Product", "?? Edit Product", "?? Search & Filter"])
     
     with tab1:
         col1, col2, col3 = st.columns(3)
@@ -758,13 +758,13 @@ def show_inventory():
             min_level = product['min_stock_level']
             
             if stock_level >= min_level:
-                status = "🟢 Adequate"
+                status = "?? Adequate"
                 status_class = "stock-green"
             elif stock_level >= min_level * 0.3:
-                status = "🟡 Low"
+                status = "?? Low"
                 status_class = "stock-yellow"
             else:
-                status = "🔴 Critical"
+                status = "?? Critical"
                 status_class = "stock-red"
             
             inventory_data.append({
@@ -781,7 +781,7 @@ def show_inventory():
         st.dataframe(df_inventory, width='stretch', hide_index=True)
         
         # Stock level visualization
-        st.markdown("### 📊 Stock Level Analysis")
+        st.markdown("### ?? Stock Level Analysis")
         
         categories = {}
         for product in products:
@@ -809,7 +809,7 @@ def show_inventory():
                     x='Category', y='value', color='variable',
                     color_discrete_map={'Adequate': '#10B981', 'Low': '#F59E0B', 'Critical': '#EF4444'},
                     title="Stock Status by Category")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
     
     with tab2:
         st.markdown("### Add New Product")
@@ -827,7 +827,7 @@ def show_inventory():
                 min_stock_level = st.number_input("Minimum Stock Level*", min_value=1, step=1, value=10, key="add_min_stock")
                 description = st.text_area("Description", placeholder="Product description...", key="add_description")
             
-            submitted = st.form_submit_button("➕ Add Product", type="primary")
+            submitted = st.form_submit_button("? Add Product", type="primary")
             
             if submitted:
                 if name and price > 0:
@@ -868,9 +868,9 @@ def show_inventory():
                     
                     col_btn1, col_btn2 = st.columns(2)
                     with col_btn1:
-                        update_btn = st.form_submit_button("💾 Update Product", type="primary", key="update_btn")
+                        update_btn = st.form_submit_button("?? Update Product", type="primary", key="update_btn")
                     with col_btn2:
-                        delete_btn = st.form_submit_button("🗑️ Delete Product", type="secondary", key="delete_btn")
+                        delete_btn = st.form_submit_button("??? Delete Product", type="secondary", key="delete_btn")
                     
                     if update_btn:
                         st.success(f"Product '{new_name}' updated successfully!")
@@ -910,7 +910,7 @@ def show_inventory():
 
 # MODULE 5: Sales Reports Interface - FIXED with proper date handling
 def show_reports():
-    st.markdown("<h1 class='main-header'>📈 Sales Reports & Analytics</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-header'>?? Sales Reports & Analytics</h1>", unsafe_allow_html=True)
     
     # Get cached data
     if st.session_state.products_data is None:
@@ -961,7 +961,7 @@ def show_reports():
     
     df_sales = pd.DataFrame(sales_data)
     
-    tab1, tab2, tab3, tab4 = st.tabs(["📊 Summary Dashboard", "📈 Visual Charts", "📋 Data Tables", "📤 Export Data"])
+    tab1, tab2, tab3, tab4 = st.tabs(["?? Summary Dashboard", "?? Visual Charts", "?? Data Tables", "?? Export Data"])
     
     with tab1:
         # Key metrics
@@ -975,7 +975,7 @@ def show_reports():
         with col1:
             st.markdown(f"""
             <div class='metric-card success-card'>
-                <h3>💰 Total Sales</h3>
+                <h3>?? Total Sales</h3>
                 <h2>KES {total_sales:,.2f}</h2>
             </div>
             """, unsafe_allow_html=True)
@@ -983,7 +983,7 @@ def show_reports():
         with col2:
             st.markdown(f"""
             <div class='metric-card info-card'>
-                <h3>🧾 Transactions</h3>
+                <h3>?? Transactions</h3>
                 <h2>{total_transactions}</h2>
             </div>
             """, unsafe_allow_html=True)
@@ -991,7 +991,7 @@ def show_reports():
         with col3:
             st.markdown(f"""
             <div class='metric-card warning-card'>
-                <h3>📦 Avg. Sale</h3>
+                <h3>?? Avg. Sale</h3>
                 <h2>KES {avg_sale:,.2f}</h2>
             </div>
             """, unsafe_allow_html=True)
@@ -999,13 +999,13 @@ def show_reports():
         with col4:
             st.markdown(f"""
             <div class='metric-card'>
-                <h3>🏆 Top Product</h3>
+                <h3>?? Top Product</h3>
                 <h4>{top_product}</h4>
             </div>
             """, unsafe_allow_html=True)
         
         # Top products table
-        st.markdown("### 🏆 Top 10 Products by Sales")
+        st.markdown("### ?? Top 10 Products by Sales")
         top_products = df_sales.groupby('product').agg({
             'quantity': 'sum',
             'total': 'sum'
@@ -1024,7 +1024,7 @@ def show_reports():
             fig = px.pie(category_sales, values='total', names='category',
                         color_discrete_sequence=px.colors.qualitative.Set3)
             fig.update_traces(textposition='inside', textinfo='percent+label')
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
         
         with col2:
             st.markdown("### Daily Sales Trend")
@@ -1034,7 +1034,7 @@ def show_reports():
                          title="Sales Over Time",
                          markers=True)
             fig.update_layout(xaxis_title="Date", yaxis_title="Total Sales (KES)")
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
         
         # Payment method distribution
         st.markdown("### Payment Methods Distribution")
@@ -1044,7 +1044,7 @@ def show_reports():
                     color='payment_method',
                     title="Sales by Payment Method")
         fig.update_layout(xaxis_title="Payment Method", yaxis_title="Total Sales (KES)")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
     
     with tab3:
         st.markdown("### Detailed Sales Data")
@@ -1131,10 +1131,10 @@ def show_reports():
         col_btn1, col_btn2, col_btn3 = st.columns(3)
         
         with col_btn1:
-            if st.button("📥 Download CSV", use_container_width=True, key="download_csv"):
+            if st.button("?? Download CSV", width="stretch", key="download_csv"):
                 csv = export_df.to_csv(index=False)
                 st.download_button(
-                    label="⬇️ Click to Download",
+                    label="?? Click to Download",
                     data=csv,
                     file_name=f"sales_report_{datetime.now().strftime('%Y%m%d')}.csv",
                     mime="text/csv",
@@ -1142,13 +1142,13 @@ def show_reports():
                 )
         
         with col_btn2:
-            if st.button("📊 Download Excel", use_container_width=True, key="download_excel"):
+            if st.button("?? Download Excel", width="stretch", key="download_excel"):
                 buffer = io.BytesIO()
                 with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
                     export_df.to_excel(writer, index=False, sheet_name='Report')
                 buffer.seek(0)
                 st.download_button(
-                    label="⬇️ Click to Download",
+                    label="?? Click to Download",
                     data=buffer,
                     file_name=f"sales_report_{datetime.now().strftime('%Y%m%d')}.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -1156,16 +1156,16 @@ def show_reports():
                 )
         
         with col_btn3:
-            if st.button("📄 Download PDF", use_container_width=True, key="download_pdf"):
+            if st.button("?? Download PDF", width="stretch", key="download_pdf"):
                 st.info("PDF generation would be implemented with reportlab")
 
 # MODULE 6: User Management Interface (Admin Only)
 def show_user_management():
-    st.markdown("<h1 class='main-header'>👥 User Management</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-header'>?? User Management</h1>", unsafe_allow_html=True)
     
     # Check if user is admin
     if not st.session_state.current_user or st.session_state.current_user.get('role') != 'admin':
-        st.warning("⚠️ This section is only accessible to administrators.")
+        st.warning("?? This section is only accessible to administrators.")
         return
     
     if st.session_state.users_data is None:
@@ -1173,7 +1173,7 @@ def show_user_management():
     
     users = st.session_state.users_data
     
-    tab1, tab2, tab3, tab4 = st.tabs(["👤 User List", "➕ Add User", "📊 Activity Logs", "⚙️ Account Settings"])
+    tab1, tab2, tab3, tab4 = st.tabs(["?? User List", "? Add User", "?? Activity Logs", "?? Account Settings"])
     
     with tab1:
         st.markdown("### Registered Users")
@@ -1181,7 +1181,7 @@ def show_user_management():
         # Display users in a dataframe
         user_data = []
         for user in users:
-            status = "🟢 Active" if random.choice([True, False]) else "🔴 Inactive"
+            status = "?? Active" if random.choice([True, False]) else "?? Inactive"
             user_data.append({
                 'ID': user['id'],
                 'Username': user['username'],
@@ -1195,7 +1195,7 @@ def show_user_management():
         st.dataframe(df_users, width='stretch', hide_index=True)
         
         # Actions based on editor
-        if st.button("💾 Save Changes", type="primary", key="save_users"):
+        if st.button("?? Save Changes", type="primary", key="save_users"):
             st.success("User data updated successfully!")
     
     with tab2:
@@ -1216,7 +1216,7 @@ def show_user_management():
             
             col_btn1, col_btn2 = st.columns(2)
             with col_btn1:
-                submit_user = st.form_submit_button("👤 Add User", type="primary", key="submit_user")
+                submit_user = st.form_submit_button("?? Add User", type="primary", key="submit_user")
             with col_btn2:
                 cancel_user = st.form_submit_button("Cancel", type="secondary", key="cancel_user")
             
@@ -1229,7 +1229,7 @@ def show_user_management():
                     st.error("Please fill in all required fields (*)")
     
     with tab3:
-        st.markdown("### 📜 User Activity Logs")
+        st.markdown("### ?? User Activity Logs")
         
         # Generate sample activity logs
         activities = []
@@ -1268,10 +1268,10 @@ def show_user_management():
         st.dataframe(filtered_logs, width='stretch', hide_index=True)
         
         # Export logs
-        if st.button("📥 Export Activity Logs", type="primary", key="export_logs"):
+        if st.button("?? Export Activity Logs", type="primary", key="export_logs"):
             csv = filtered_logs.to_csv(index=False)
             st.download_button(
-                label="⬇️ Download CSV",
+                label="?? Download CSV",
                 data=csv,
                 file_name=f"activity_logs_{datetime.now().strftime('%Y%m%d')}.csv",
                 mime="text/csv",
@@ -1292,12 +1292,12 @@ def show_user_management():
                 with col1:
                     st.markdown("#### Account Status")
                     
-                    current_status = "🟢 Active" if random.choice([True, False]) else "🔴 Inactive"
+                    current_status = "?? Active" if random.choice([True, False]) else "?? Inactive"
                     st.write(f"**Current Status:** {current_status}")
                     
                     new_status = st.radio("Change Status", ["Active", "Inactive", "Suspended"], key="new_status")
                     
-                    if st.button("🔄 Update Status", type="primary", key="update_status"):
+                    if st.button("?? Update Status", type="primary", key="update_status"):
                         st.success(f"Account status updated to: {new_status}")
                 
                 with col2:
@@ -1306,7 +1306,7 @@ def show_user_management():
                     st.write(f"**Current Role:** {user['role']}")
                     new_role = st.selectbox("Assign New Role", ["admin", "manager", "clerk"], key="assign_role")
                     
-                    if st.button("👑 Update Role", type="primary", key="update_role"):
+                    if st.button("?? Update Role", type="primary", key="update_role"):
                         st.success(f"Role updated to: {new_role}")
                 
                 st.markdown("---")
@@ -1315,11 +1315,11 @@ def show_user_management():
                 col_danger1, col_danger2 = st.columns(2)
                 
                 with col_danger1:
-                    if st.button("🔒 Force Password Reset", type="secondary", key="force_reset"):
+                    if st.button("?? Force Password Reset", type="secondary", key="force_reset"):
                         st.warning("Password reset email sent to user.")
                 
                 with col_danger2:
-                    if st.button("🗑️ Delete Account", type="secondary", key="delete_account"):
+                    if st.button("??? Delete Account", type="secondary", key="delete_account"):
                         st.error("Are you sure you want to delete this account? This action cannot be undone.")
                         confirm = st.checkbox("I confirm I want to delete this account", key="confirm_delete")
                         if confirm:
@@ -1327,9 +1327,9 @@ def show_user_management():
 
 # MODULE 7: Settings System Interface
 def show_settings():
-    st.markdown("<h1 class='main-header'>⚙️ System Settings</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-header'>?? System Settings</h1>", unsafe_allow_html=True)
     
-    tab1, tab2, tab3, tab4 = st.tabs(["🏢 Business Profile", "🧾 Receipt Template", "🔔 Notifications", "🛠️ System Preferences"])
+    tab1, tab2, tab3, tab4 = st.tabs(["?? Business Profile", "?? Receipt Template", "?? Notifications", "??? System Preferences"])
     
     with tab1:
         st.markdown("### Business Information")
@@ -1354,7 +1354,7 @@ def show_settings():
             
             col_btn1, col_btn2 = st.columns(2)
             with col_btn1:
-                save_profile = st.form_submit_button("💾 Save Profile", type="primary", key="save_profile")
+                save_profile = st.form_submit_button("?? Save Profile", type="primary", key="save_profile")
             with col_btn2:
                 cancel_profile = st.form_submit_button("Cancel", type="secondary", key="cancel_profile")
             
@@ -1398,7 +1398,7 @@ def show_settings():
                                          ["Modern", "Classic", "Minimal", "Professional"],
                                          key="template_style")
             
-            if st.button("🔄 Update Template", type="primary", key="update_template"):
+            if st.button("?? Update Template", type="primary", key="update_template"):
                 st.success("Receipt template updated successfully!")
     
     with tab3:
@@ -1437,7 +1437,7 @@ def show_settings():
                 notification_sound = st.checkbox("Play Notification Sound", value=True, key="notify_sound")
                 sound_type = st.selectbox("Sound Type", ["Default", "Chime", "Beep", "None"], key="sound_type")
         
-        if st.button("🔔 Save Notification Settings", type="primary", key="save_notify"):
+        if st.button("?? Save Notification Settings", type="primary", key="save_notify"):
             st.success("Notification settings updated successfully!")
     
     with tab4:
@@ -1484,25 +1484,25 @@ def show_settings():
         col_maint1, col_maint2, col_maint3 = st.columns(3)
         
         with col_maint1:
-            if st.button("🔄 Clear Cache", type="secondary", key="clear_cache"):
+            if st.button("?? Clear Cache", type="secondary", key="clear_cache"):
                 st.info("Cache cleared successfully!")
         
         with col_maint2:
-            if st.button("📊 Rebuild Indexes", type="secondary", key="rebuild_index"):
+            if st.button("?? Rebuild Indexes", type="secondary", key="rebuild_index"):
                 st.info("Database indexes rebuilt successfully!")
         
         with col_maint3:
-            if st.button("🚀 System Diagnostics", type="secondary", key="sys_diagnostics"):
+            if st.button("?? System Diagnostics", type="secondary", key="sys_diagnostics"):
                 st.info("System diagnostics completed. All systems operational.")
         
-        if st.button("💾 Save All Settings", type="primary", key="save_all_settings"):
+        if st.button("?? Save All Settings", type="primary", key="save_all_settings"):
             st.success("All system settings saved successfully!")
 
 # MODULE 8: Security Settings
 def show_security():
-    st.markdown("<h1 class='main-header'>🔐 Security Settings</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-header'>?? Security Settings</h1>", unsafe_allow_html=True)
     
-    tab1, tab2, tab3, tab4 = st.tabs(["🔑 Password Policy", "👥 Access Control", "📜 Audit Logs", "🛡️ Security Features"])
+    tab1, tab2, tab3, tab4 = st.tabs(["?? Password Policy", "?? Access Control", "?? Audit Logs", "??? Security Features"])
     
     with tab1:
         st.markdown("### Password Security Policy")
@@ -1522,7 +1522,7 @@ def show_security():
                 max_login_attempts = st.slider("Max Failed Login Attempts", 1, 10, 3, key="max_attempts")
                 lockout_duration = st.slider("Lockout Duration (minutes)", 1, 60, 15, key="lockout_duration")
             
-            save_policy = st.form_submit_button("💾 Save Policy", type="primary", key="save_policy")
+            save_policy = st.form_submit_button("?? Save Policy", type="primary", key="save_policy")
             
             if save_policy:
                 st.success("Password policy updated successfully!")
@@ -1536,25 +1536,25 @@ def show_security():
             
             if len(test_password) >= 8:
                 strength += 1
-                feedback.append("✓ Minimum length met")
+                feedback.append("? Minimum length met")
             else:
-                feedback.append("✗ Minimum length not met")
+                feedback.append("? Minimum length not met")
             
             if any(c.isupper() for c in test_password):
                 strength += 1
-                feedback.append("✓ Contains uppercase")
+                feedback.append("? Contains uppercase")
             
             if any(c.islower() for c in test_password):
                 strength += 1
-                feedback.append("✓ Contains lowercase")
+                feedback.append("? Contains lowercase")
             
             if any(c.isdigit() for c in test_password):
                 strength += 1
-                feedback.append("✓ Contains numbers")
+                feedback.append("? Contains numbers")
             
             if any(not c.isalnum() for c in test_password):
                 strength += 1
-                feedback.append("✓ Contains special characters")
+                feedback.append("? Contains special characters")
             
             # Display strength meter
             colors = ['#EF4444', '#F59E0B', '#FBBF24', '#10B981', '#059669']
@@ -1616,7 +1616,7 @@ def show_security():
                     can_view_logs = st.checkbox("View System Logs", value=True, key="can_view_logs")
                     can_backup_data = st.checkbox("Backup Data", value=selected_role == 'admin', key="can_backup_data")
             
-            if st.button(f"💾 Save {selected_role} Permissions", type="primary", key=f"save_{selected_role}_perms"):
+            if st.button(f"?? Save {selected_role} Permissions", type="primary", key=f"save_{selected_role}_perms"):
                 st.success(f"Permissions for {selected_role} role saved successfully!")
     
     with tab3:
@@ -1673,10 +1673,10 @@ def show_security():
         col_export, col_clear = st.columns(2)
         
         with col_export:
-            if st.button("📥 Export Audit Logs", type="primary", key="export_audit"):
+            if st.button("?? Export Audit Logs", type="primary", key="export_audit"):
                 csv = filtered_security.to_csv(index=False)
                 st.download_button(
-                    label="⬇️ Download CSV",
+                    label="?? Download CSV",
                     data=csv,
                     file_name=f"audit_logs_{datetime.now().strftime('%Y%m%d')}.csv",
                     mime="text/csv",
@@ -1684,7 +1684,7 @@ def show_security():
                 )
         
         with col_clear:
-            if st.button("🗑️ Clear Old Logs", type="secondary", key="clear_old_logs"):
+            if st.button("??? Clear Old Logs", type="secondary", key="clear_old_logs"):
                 st.warning("This will delete logs older than 90 days. Continue?")
                 if st.checkbox("Yes, clear old logs", key="confirm_clear_logs"):
                     st.info("Old logs cleared successfully!")
@@ -1752,7 +1752,7 @@ def show_security():
             monitor_privileged = st.checkbox("Monitor Privileged Accounts", value=True, key="monitor_privileged")
             log_all_access = st.checkbox("Log All Access Attempts", value=True, key="log_all_access")
         
-        if st.button("🛡️ Apply Security Settings", type="primary", key="apply_security"):
+        if st.button("??? Apply Security Settings", type="primary", key="apply_security"):
             st.success("Security settings applied successfully!")
             st.info("Some settings may require system restart to take effect")
 
@@ -1787,10 +1787,10 @@ def main_navigation():
         # User info
         if st.session_state.current_user:
             user_role_icon = {
-                'admin': '👑',
-                'manager': '📊',
-                'clerk': '💼'
-            }.get(st.session_state.current_user.get('role', 'user'), '👤')
+                'admin': '??',
+                'manager': '??',
+                'clerk': '??'
+            }.get(st.session_state.current_user.get('role', 'user'), '??')
             
             st.markdown(f"""
             <div class='user-info'>
@@ -1799,12 +1799,12 @@ def main_navigation():
             </div>
             """, unsafe_allow_html=True)
         
-        st.markdown("<h2 class='sidebar-header'>📋 Navigation</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 class='sidebar-header'>?? Navigation</h2>", unsafe_allow_html=True)
         
         # Navigation menu
         selected = option_menu(
             menu_title=None,
-            options=["📊 Dashboard", "🛒 Sales", "📦 Inventory", "📈 Reports", "👥 Users", "⚙️ Settings", "🔐 Security", "🚪 Logout"],
+            options=["?? Dashboard", "?? Sales", "?? Inventory", "?? Reports", "?? Users", "?? Settings", "?? Security", "?? Logout"],
             icons=["speedometer2", "cart", "box", "graph-up", "people", "gear", "shield-lock", "box-arrow-right"],
             menu_icon="cast",
             default_index=0,
@@ -1818,14 +1818,14 @@ def main_navigation():
         
         # Update selected module
         module_map = {
-            "📊 Dashboard": "Dashboard",
-            "🛒 Sales": "Sales Processing",
-            "📦 Inventory": "Inventory",
-            "📈 Reports": "Reports",
-            "👥 Users": "User Management",
-            "⚙️ Settings": "Settings",
-            "🔐 Security": "Security",
-            "🚪 Logout": "Logout"
+            "?? Dashboard": "Dashboard",
+            "?? Sales": "Sales Processing",
+            "?? Inventory": "Inventory",
+            "?? Reports": "Reports",
+            "?? Users": "User Management",
+            "?? Settings": "Settings",
+            "?? Security": "Security",
+            "?? Logout": "Logout"
         }
         
         st.session_state.selected_module = module_map[selected]
@@ -1836,9 +1836,9 @@ def main_navigation():
         <div style="text-align: center; font-size: 0.8rem; color: #666;">
             <p><strong>Salphine chemos Getaway Resort</strong></p>
             <p>P.O. Box 19938 - 00202 KNH Nairobi</p>
-            <p>📞 +254 727 680 468</p>
-            <p>📧 info@salphinechemos.com</p>
-            <p>🌐 www.salphinechemos.com</p>
+            <p>?? +254 727 680 468</p>
+            <p>?? info@salphinechemos.com</p>
+            <p>?? www.salphinechemos.com</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1869,12 +1869,12 @@ def main():
         elif st.session_state.selected_module == "Logout":
             col1, col2, col3 = st.columns([1, 2, 1])
             with col2:
-                st.markdown("### 👋 Logout Confirmation")
+                st.markdown("### ?? Logout Confirmation")
                 st.warning("Are you sure you want to logout?")
                 
                 col_btn1, col_btn2 = st.columns(2)
                 with col_btn1:
-                    if st.button("✅ Yes, Logout", type="primary", key="yes_logout"):
+                    if st.button("? Yes, Logout", type="primary", key="yes_logout"):
                         st.session_state.authenticated = False
                         st.session_state.current_user = None
                         st.session_state.cart = []
@@ -1884,7 +1884,7 @@ def main():
                         st.success("Logged out successfully!")
                         st.rerun()
                 with col_btn2:
-                    if st.button("❌ Cancel", key="cancel_logout"):
+                    if st.button("? Cancel", key="cancel_logout"):
                         st.session_state.selected_module = "Dashboard"
                         st.rerun()
 
